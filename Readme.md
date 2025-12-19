@@ -8,3 +8,7 @@ require("present").start_presenation {}
 ```
 
 Use `n` and `p` to move between slides and `q` to close window.
+
+# Credits
+
+shdangwal

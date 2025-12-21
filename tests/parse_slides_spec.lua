@@ -9,6 +9,7 @@ describe("prsent.parse_slides", function()
 				{
 					title = "",
 					body = {},
+					blocks = {},
 				},
 			},
 		}, parse({}))
@@ -20,8 +21,44 @@ describe("prsent.parse_slides", function()
 				{
 					title = "# This is the first slide",
 					body = { "This is the body" },
+					blocks = {},
 				},
 			},
 		}, parse({ "# This is the first slide", "This is the body" }))
+	end)
+
+	it("should parse a file with one slide with block of lua code", function()
+		local results = parse({ "# This is the first slide", "This is the body", "```lua", "print('hi')", "```" })
+
+		eq(1, #results.slides)
+
+		local slide = results.slides[1]
+		eq("# This is the first slide", slide.title)
+		eq({ "This is the body", "```lua", "print('hi')", "```" }, slide.body)
+
+		local block = vim.trim([[
+```lua
+print('hi')
+```
+]])
+		eq({
+			language = "lua",
+			body = "print('hi')",
+		}, slide.blocks[1])
+		-- eq({
+		-- 	slides = {
+		-- 		{
+		-- 			title = "# This is the first slide",
+		-- 			body = { "This is the body", "```lua", "print('hi')", "```" },
+		-- 			blocks = {
+		-- 				vim.trim([[
+		--           ```lua
+		--           print('hi')
+		--           ```
+		--           ]]),
+		-- 			},
+		-- 		},
+		-- 	},
+		-- }, parse({ "# This is the first slide", "This is the body", "```lua", "print('hi')", "```" }))
 	end)
 end)
